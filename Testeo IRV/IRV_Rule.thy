@@ -3,8 +3,8 @@ chapter \<open>Voting Rules\<close>
 section \<open>IRV Rule\<close>
 
 theory IRV_Rule
-  imports "../Theories/Compositional_Structures/Basic_Modules/Borda_Module"
-          "../Theories/Compositional_Structures/Elect_Composition"
+  imports "IRV_Module"
+          "../Theories/Compositional_Structures/Defer_One_Loop_Composition"
 begin
 
 
@@ -12,7 +12,7 @@ begin
 subsection \<open>Definition\<close>
 
 fun IRV_rule :: "'a Electoral_Module" where
-  "IRV_rule A p = elector IRV A p"
+  "IRV_rule A p= ((min_eliminator IRV_score )\<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d) A p"
 
 
 end

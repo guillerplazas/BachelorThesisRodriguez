@@ -1,7 +1,7 @@
 section \<open>IRV Module\<close>
 
 theory IRV_Module
-  imports "../Theories/Compositional_Structures/Basic Modules/Component_Types/Elimination_Module"
+  imports "../theories/Compositional_Structures/Basic Modules/Component_Types/Elimination_Module"
 begin
 
 subsection \<open>Definition\<close>

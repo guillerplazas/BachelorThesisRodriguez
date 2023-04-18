@@ -3,7 +3,7 @@ chapter \<open>Voting Rules\<close>
 section \<open>IRV Rule\<close>
 
 theory IRV_Rule
-  imports "IRV_Module"
+  imports "../Theories/Compositional_Structures/Basic_Modules/Borda_Module"
           "../Theories/Compositional_Structures/Elect_Composition"
 begin
 
