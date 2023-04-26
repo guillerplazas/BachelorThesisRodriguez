@@ -12,7 +12,7 @@ begin
 subsection \<open>Definition\<close>
 
 fun IRV_rule :: "'a Electoral_Module" where
-  "IRV_rule A p= ((min_eliminator IRV_score )\<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d) A p"
+  "IRV_rule A p= (((abs_eliminator \<triangleright> min_eliminator IRV_score )\<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d) \<triangleright> elect_module ) A p"
 
 
 end
