@@ -52,9 +52,13 @@ text \<open>
   the amount of ballots in p that rank alternative a in first position.
 \<close>
 
+
 fun win_count :: "'a Profile \<Rightarrow> 'a \<Rightarrow> nat" where
   "win_count p a =
     card {i::nat. i < length p \<and> above (p!i) a = {a}}"
+
+fun has_majority :: "'a Profile \<Rightarrow> 'a \<Rightarrow> bool" where
+  "has_majority p a = (win_count p a > ( length p div 2))"
 
 fun win_count_code :: "'a Profile \<Rightarrow> 'a \<Rightarrow> nat" where
   "win_count_code Nil a = 0" |
