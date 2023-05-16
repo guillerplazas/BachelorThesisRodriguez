@@ -38,4 +38,6 @@ proof (unfold pairwise_majority_rule.simps)
     by metis
 qed
 
+value "pairwise_majority_rule "
+
 end

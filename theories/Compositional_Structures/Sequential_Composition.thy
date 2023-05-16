@@ -20,6 +20,9 @@ text \<open>
 
 subsection \<open>Definition\<close>
 
+
+
+
 fun sequential_composition :: "'a Electoral_Module \<Rightarrow> 'a Electoral_Module \<Rightarrow>
         'a Electoral_Module" where
   "sequential_composition m n A p =

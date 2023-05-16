@@ -39,6 +39,11 @@ fun elimination_module :: "'a Evaluation_Function \<Rightarrow> Threshold_Value 
 
 subsection \<open>Common Eliminators\<close>
 
+
+fun has_majority :: "'a Profile \<Rightarrow> 'a \<Rightarrow> bool" where
+  "has_majority p a = (win_count p a > ( length p div 2))"
+
+
 fun less_eliminator :: "'a Evaluation_Function \<Rightarrow> Threshold_Value \<Rightarrow>
                             'a Electoral_Module" where
   "less_eliminator e t A p = elimination_module e t (<) A p"
@@ -54,6 +59,7 @@ fun leq_eliminator :: "'a Evaluation_Function \<Rightarrow> Threshold_Value \<Ri
 fun min_eliminator :: "'a Evaluation_Function \<Rightarrow> 'a Electoral_Module" where
   "min_eliminator e A p =
     leq_eliminator e (Min {e x A p | x. x \<in> A}) A p"
+
 
 fun average :: "'a Evaluation_Function \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow>
                     Threshold_Value" where

@@ -32,6 +32,8 @@ definition condorcet_rating :: "'a Evaluation_Function \<Rightarrow> bool" where
     \<forall> A p w . condorcet_winner A p w \<longrightarrow>
       (\<forall> l \<in> A . l \<noteq> w \<longrightarrow> f l A p < f w A p)"
 
+
+
 subsection \<open>Theorems\<close>
 
 text \<open>

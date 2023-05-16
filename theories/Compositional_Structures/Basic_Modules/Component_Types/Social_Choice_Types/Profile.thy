@@ -60,6 +60,10 @@ fun win_count :: "'a Profile \<Rightarrow> 'a \<Rightarrow> nat" where
 fun has_majority :: "'a Profile \<Rightarrow> 'a \<Rightarrow> bool" where
   "has_majority p a = (win_count p a > ( length p div 2))"
 
+fun not_has_majority :: "'a Profile \<Rightarrow> 'a \<Rightarrow> bool" where
+  "not_has_majority p a = (win_count p a \<le> ( length p div 2))"
+
+
 fun win_count_code :: "'a Profile \<Rightarrow> 'a \<Rightarrow> nat" where
   "win_count_code Nil a = 0" |
   "win_count_code (p#ps) a =
