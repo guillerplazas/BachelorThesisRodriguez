@@ -812,6 +812,7 @@ text \<open>
   it never elects an alternative.
 \<close>
 
+
 definition non_electing :: "'a Electoral_Module \<Rightarrow> bool" where
   "non_electing m \<equiv>
     electoral_module m \<and> (\<forall> A p. finite_profile A p \<longrightarrow> elect m A p = {})"
