@@ -28,12 +28,30 @@ fun IRV_rule :: "'a Electoral_Module" where
   "IRV_rule A p= (((abs_rule \<triangleright> min_eliminator IRV_score )\<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d)) A p"
 
 (*Multi_winner wrapper*)
+
+fun multi_winner_IRV_rule :: "nat \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow> 'a set \<times> 'a set \<times> 'a set" where
+  "multi_winner_IRV_rule 0 A p = ({}, A, {})" 
+| "multi_winner_IRV_rule (Suc n) A p = (
+    let (elected, rejected, deferred) = IRV_rule A p;
+        (new_elected, new_rejected, new_deferred) = multi_winner_IRV_rule n (A - elected) p
+    in (elected \<union> new_elected, rejected \<union> new_rejected, deferred \<union> new_deferred))"
+
+(*
 fun multi_winner_IRV_rule :: "nat \<Rightarrow> 'a Electoral_Module" where
-  "multi_winner_IRV_rule 0 A p = ({}, A, {})"
+  "multi_winner_IRV_rule 0 A p = ({}, A, {})" 
+| "multi_winner_IRV_rule (Suc n) A p = (
+    let (elected, rejected, deferred) = IRV_rule A p;
+        (new_elected, new_rejected, new_deferred) = multi_winner_IRV_rule n (A - elected) p
+    in (elected \<union> new_elected, rejected \<union> new_rejected, new_deferred))" *)
+
+
+(*Modelo-este debería estar mal
+fun multi_winner_IRV_rule :: "nat \<Rightarrow> 'a Electoral_Module" where
+  "multi_winner_IRV_rule 0 A p = ({}, A, {})" 
 | "multi_winner_IRV_rule (Suc n) A p = (
     let (winners, not_losers, losers) = IRV_rule A p;
         (new_winners, new_not_losers, new_losers) = multi_winner_IRV_rule n (A - winners) p
-    in (winners \<union> new_winners, new_not_losers, losers \<union> new_losers))"
+    in (winners \<union> new_winners, new_not_losers, losers \<union> new_losers))" *)
 
 
 
@@ -62,12 +80,16 @@ fun replace_in_relation :: "'a \<Rightarrow> 'a set \<Rightarrow> 'a rel \<Right
 definition replace_alternative_with_clones :: "'a \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow> 'a Profile" where
   "replace_alternative_with_clones a c P = map (replace_in_relation a c) P"
 
-definition ICP :: "'a Electoral_Module \<Rightarrow> bool" where
-  "ICP m \<equiv> electoral_module m \<and>
-    \<forall>A P a c. c \<subseteq> A \<and> a \<in> A \<and> has_clones A (replace_alternative_with_clones a c P) \<Longrightarrow>
-      m A P = m (A - {a} \<union> c) (replace_alternative_with_clones a c P) "
+definition independence_of_clones :: "'a Electoral_Module \<Rightarrow> bool" where
+  "independence_of_clones m =
+    (\<forall>A P a c. c \<subseteq> A \<and> a \<in> A \<and> has_clones A P \<longrightarrow>
+      m A P = m (A - {a} \<union> c) (replace_alternative_with_clones a c P))"
 
-
+theorem IRV_rule_independence_of_clones:
+  "independence_of_clones IRV_rule"
+proof (unfold IRV_rule.simps)
+  show "independence_of_clones (abs_rule \<triangleright> min_eliminator IRV_score\<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d)" 
+    by metis
 
 
 end

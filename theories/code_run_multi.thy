@@ -1,13 +1,15 @@
-section \<open>code_run\<close>
+section \<open>code_run_multi\<close>
 
-theory code_run
+theory code_run_multi
   imports IRV_Rule
 begin
 
 (*Code Testing*)
 
 text \<open>
-Case 1: A wins first round
+Case 1: 2 winners
+   A wins first round
+  b wins second
 Voter 1: [a,b,c]
 Voter 2: [a,c,b]
 Voter 2: [b,a,c]
@@ -33,7 +35,7 @@ definition voter3_pref1 :: "(char \<times> char) set" where
 definition p1 :: "char Profile" where
   "p1 = [voter1_pref1, voter2_pref1,voter3_pref1]"
 
-value "IRV_Rule A1 p1"
+value "multi_winner_IRV_rule (Suc (Suc 0))  A1 p1"
 
 text \<open>
 Case 2: C eliminated first, then A wins

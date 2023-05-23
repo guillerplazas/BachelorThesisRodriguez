@@ -1,6 +1,6 @@
-section \<open>code_run\<close>
+section \<open>code_run_irv\<close>
 
-theory code_run
+theory code_run_irv
   imports IRV_Rule
 begin
 
