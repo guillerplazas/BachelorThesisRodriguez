@@ -35,8 +35,10 @@ text \<open>
   linear orders on A.
 \<close>
 
+(*definition profile :: "'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" where
+  "profile A p \<equiv> \<forall> i::nat. i < length p \<longrightarrow> linear_order_on A (p!i)"*)
 definition profile :: "'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" where
-  "profile A p \<equiv> \<forall> i::nat. i < length p \<longrightarrow> linear_order_on A (p!i)"
+  "profile A p \<equiv> \<forall> i::nat. i < length p \<longrightarrow> strict_linear_order_on A (p!i)"
 
 lemma profile_set : "profile A p \<equiv> (\<forall> b \<in> (set p). linear_order_on A b)"
   unfolding profile_def all_set_conv_all_nth
@@ -54,8 +56,13 @@ text \<open>
 
 
 fun win_count :: "'a Profile \<Rightarrow> 'a \<Rightarrow> nat" where
+  "win_count p a = length [i \<leftarrow> [0..<length p]. above (p ! i) a = {}]"
+
+(*
+fun win_count :: "'a Profile \<Rightarrow> 'a \<Rightarrow> nat" where
   "win_count p a =
     card {i::nat. i < length p \<and> above (p!i) a = {a}}"
+*)
 
 fun has_majority :: "'a Profile \<Rightarrow> 'a \<Rightarrow> bool" where
   "has_majority p a = (win_count p a > ( length p div 2))"

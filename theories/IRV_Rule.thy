@@ -9,33 +9,34 @@ begin
 fun IRV_score :: "'a Evaluation_Function" where
   "IRV_score x A p = win_count p x"
 
-
-(*Estructura cogida de Pairwise-Comp, debería servir para abs*)
-(*Aqui por que tres definiciones?*)
-fun abs_rule :: "'a Electoral_Module" where
-  "abs_rule A p = elector absolute A p"
-
-fun absolute' :: "'a Electoral_Module" where
-"absolute' A p =
-  ((min_eliminator abs_score) \<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d) A p"
-
-fun abs_rule' :: "'a Electoral_Module" where
-  "abs_rule' A p = iterelect absolute' A p"
-
 (*Aqui acaban definiciones de absolute*)
 
 fun IRV_rule :: "'a Electoral_Module" where
-  "IRV_rule A p= (((abs_rule \<triangleright> min_eliminator IRV_score )\<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d)) A p"
+  "IRV_rule A p= (((absolute_max \<triangleright> min_eliminator IRV_score )\<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d)\<triangleright>elect_module) A p"
 
 (*Multi_winner wrapper*)
 
+fun multi_winner_IRV :: "nat \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow> 'a Result" where
+"multi_winner_IRV n A p =
+  (if A = {} \<or> n > card A
+   then Error
+   else 
+    (case IRV_rule3 A p of
+      Error \<Rightarrow> Error
+    | OK winner \<Rightarrow> 
+      (case multi_winner_IRV (n - 1) (A - {winner}) p of
+        Error \<Rightarrow> Error
+      | OK winners \<Rightarrow> OK (insert winner winners))))"
+
+
+(*
 fun multi_winner_IRV_rule :: "nat \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow> 'a set \<times> 'a set \<times> 'a set" where
   "multi_winner_IRV_rule 0 A p = ({}, A, {})" 
 | "multi_winner_IRV_rule (Suc n) A p = (
     let (elected, rejected, deferred) = IRV_rule A p;
         (new_elected, new_rejected, new_deferred) = multi_winner_IRV_rule n (A - elected) p
     in (elected \<union> new_elected, rejected \<union> new_rejected, deferred \<union> new_deferred))"
-
+*)
 (*
 fun multi_winner_IRV_rule :: "nat \<Rightarrow> 'a Electoral_Module" where
   "multi_winner_IRV_rule 0 A p = ({}, A, {})" 
@@ -55,41 +56,33 @@ fun multi_winner_IRV_rule :: "nat \<Rightarrow> 'a Electoral_Module" where
 
 
 
-(*Proof while working here, change later*)
+
+
+(*Just for the purpose of modelling the absolute majority rule ;) *)
+fun abs_rule :: "'a Electoral_Module" where
+  "abs_rule A p = elector absolute_max A p"
 
 text \<open>
-has_clones checks if there exist alternatives in the set A and profile P which are ranked identically by all voters - "clones"
+  These last functions have been developed for test purposes. 
+  They are commented now for perfomance purposes. 
 \<close>
 
-definition has_clones :: "'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" where
-  "has_clones A P \<equiv> \<exists>c. c \<subseteq> A \<and> (list_all (\<lambda>ps. \<forall>x \<in> c. \<forall>y \<in> c. (x, y) \<in> ps \<longleftrightarrow> (y, x) \<in> ps) P)"
+(*
+fun absolute' :: "'a Electoral_Module" where
+"absolute' A p =
+  ((min_eliminator abs_score) \<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d) A p"
 
+fun abs_rule' :: "'a Electoral_Module" where
+  "abs_rule' A p = iterelect absolute' A p"
 
+fun IRV_rule2 :: "'a Electoral_Module" where
+  "IRV_rule2 A p= (((absolute_max \<triangleright> min_eliminator IRV_score )\<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d)) A p"
 
-(*definition satisfies_ICP_IRV :: "bool" where
-  "satisfies_ICP_IRV \<equiv> \<forall>A P a c. c \<subseteq> A \<and> a \<in> A \<and> has_clones A (replace_alternative_with_clones a c P) \<Longrightarrow> 
-  IRV_rule A P = IRV_rule (A - {a} \<union> c) (replace_alternative_with_clones a c P)"*)
+fun IRV_rule3 :: "'a Electoral_Module" where
+  "IRV_rule3 A p= (((abs_rule \<triangleright> min_eliminator IRV_score )\<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d)) A p"
 
-
-fun replace_in_relation :: "'a \<Rightarrow> 'a set \<Rightarrow> 'a rel \<Rightarrow> 'a rel" where
-  "replace_in_relation a c R = 
-  {(if x = a then z else x, if y = a then z else y) | x y z. (x, y) \<in> R \<and> z \<in> c } \<union>
-  {(x, y) | x y. (x, y) \<in> R \<and> x \<noteq> a \<and> y \<noteq> a}"
-
-
-definition replace_alternative_with_clones :: "'a \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow> 'a Profile" where
-  "replace_alternative_with_clones a c P = map (replace_in_relation a c) P"
-
-definition independence_of_clones :: "'a Electoral_Module \<Rightarrow> bool" where
-  "independence_of_clones m =
-    (\<forall>A P a c. c \<subseteq> A \<and> a \<in> A \<and> has_clones A P \<longrightarrow>
-      m A P = m (A - {a} \<union> c) (replace_alternative_with_clones a c P))"
-
-theorem IRV_rule_independence_of_clones:
-  "independence_of_clones IRV_rule"
-proof (unfold IRV_rule.simps)
-  show "independence_of_clones (abs_rule \<triangleright> min_eliminator IRV_score\<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d)" 
-    by metis
-
+fun mid_step:: "'a Electoral_Module" where
+  "mid_step A p = (absolute_max \<triangleright> min_eliminator IRV_score) A p "
+*)
 
 end

@@ -1,10 +1,10 @@
-section \<open>code_run_irv\<close>
+section \<open>code_run_clone\<close>
 
-theory code_run_irv
-  imports IRV_Rule
-          Sequential_Majority_Comparison
-          Borda_Rule
-          Copeland_Rule
+theory code_run_clone
+  imports "../IRV_Rule"
+          "../Sequential_Majority_Comparison"
+          "../Borda_Rule"
+          "../Copeland_Rule"
 begin
 
 text \<open>
@@ -46,9 +46,7 @@ definition voter3_pref1 :: "(char \<times> char) set" where
 (* Defining the profile p *)
 definition p1 :: "char Profile" where  "p1 = [voter1_pref1, voter2_pref1,voter3_pref1]"
 
-value "IRV_rule A p1"
-value "profile A p1"
-value "has_clones A p1"
+value "IRV_rule3 A p1"
 
 (*
 value "win_count p1 canA"
@@ -93,7 +91,7 @@ value "borda_rule A p1"
 value "IRV_rule A p2"
 value "mid_step A p2"
 value "mid_step A p1"
-value "IRV_rule A p2"
+value "IRV_rule3 A p2"
 value "IRV_score canA A p2"
  (*
 text \<open>
