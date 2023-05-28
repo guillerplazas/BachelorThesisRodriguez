@@ -18,12 +18,13 @@ definition canC :: "char" where "canC = CHR ''c''"
 
 definition A :: "char set" where  "A = {canA, canB, canC}"
 
-definition voter1_pref1 :: "(char \<times> char) set" where "voter1_pref1 = set [(canC, canB), (canB, canA),(canC, canA)]"
-definition voter2_pref1 :: "(char \<times> char) set" where "voter2_pref1 = set [(canB, canC), (canC, canA),(canB, canA)]"
-definition voter3_pref1 :: "(char \<times> char) set" where "voter3_pref1 = set [(canC, canB), (canB, canA),(canC, canA)]"
+definition voter1_pref1 :: "(char \<times> char) set" where "voter1_pref1 = set [(canC, canB), (canB, canA),(canC, canA),(canA, canA),(canB, canB),(canC, canC)]"
+definition voter2_pref1 :: "(char \<times> char) set" where "voter2_pref1 = set [(canB, canC), (canC, canA),(canB, canA),(canA, canA),(canB, canB),(canC, canC)]"
+definition voter3_pref1 :: "(char \<times> char) set" where "voter3_pref1 = set [(canC, canB), (canB, canA),(canC, canA),(canA, canA),(canB, canB),(canC, canC)]"
 
 definition p1 :: "char Profile" where  "p1 = [voter1_pref1, voter2_pref1,voter3_pref1]"
 
+value "dir_pref_in_ballot canA canB voter1_pref1"
 value "IRV_rule A p1"
 value "profile A p1"
 

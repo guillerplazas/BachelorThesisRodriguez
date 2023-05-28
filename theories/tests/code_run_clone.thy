@@ -20,14 +20,18 @@ Voter 2: [c,b,a]
 Voter 2: [c,b,a]
 \<close>
 
-definition voter1_pref1 :: "(char \<times> char) set" where "voter1_pref1 = set [(canC, canB), (canB, canA),(canC, canA)]"
-definition voter2_pref1 :: "(char \<times> char) set" where "voter2_pref1 = set [(canC, canB), (canB, canA),(canC, canA)]"
-definition voter3_pref1 :: "(char \<times> char) set" where "voter3_pref1 = set [(canC, canB), (canB, canA),(canC, canA)]"
+definition voter1_pref1 :: "(char \<times> char) set" where "voter1_pref1 = set [(canC, canB), (canB, canA),(canC, canA),(canA, canA),(canB, canB),(canC, canC)]"
+definition voter2_pref1 :: "(char \<times> char) set" where "voter2_pref1 = set [(canC, canB), (canB, canA),(canC, canA),(canA, canA),(canB, canB),(canC, canC)]"
+definition voter3_pref1 :: "(char \<times> char) set" where "voter3_pref1 = set [(canC, canB), (canB, canA),(canC, canA),(canA, canA),(canB, canB),(canC, canC)]"
 
 definition p1 :: "char Profile" where  "p1 = [voter1_pref1, voter2_pref1,voter3_pref1]"
 
-
+value "dir_pref_in_ballot canC canA voter1_pref1"
+value "clones_exist p1"
+value "clones_exist_in_A A p1"
 value "modify_profile_with_clones p1  canA canX"
+value "clone_intro A p1"
+
 value "is_directly_preferred_in_ballot canB canC voter1_pref1"
 value "always_directly_preferred p1"
 

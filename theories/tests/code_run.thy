@@ -20,10 +20,10 @@ Voter 2: [c,b,a]
 
 text \<open>Definition of alternatives A\<close>
 definition canA :: "char" where "canA = CHR ''a''"
-definition canB :: "char" where  "canB = CHR ''b''"
+definition canB :: "char" where "canB = CHR ''b''"
 definition canC :: "char" where "canC = CHR ''c''"
 
-definition A1 :: "char set" where  "A1 = {canA, canB}"
+definition A1 :: "char set" where  "A1 = {canA, canB,canC}"
 
 text \<open>Definition of Preference_Profiles\<close>
 definition voter1_pref1 :: "(char \<times> char) set" where "voter1_pref1 = set [(canB, canA)]"

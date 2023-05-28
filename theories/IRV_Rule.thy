@@ -15,7 +15,7 @@ fun IRV_rule :: "'a Electoral_Module" where
   "IRV_rule A p= (((absolute_max \<triangleright> min_eliminator IRV_score )\<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d)\<triangleright>elect_module) A p"
 
 (*Multi_winner wrapper*)
-
+(*
 fun multi_winner_IRV :: "nat \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow> 'a Result" where
 "multi_winner_IRV n A p =
   (if A = {} \<or> n > card A
@@ -27,7 +27,7 @@ fun multi_winner_IRV :: "nat \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rig
       (case multi_winner_IRV (n - 1) (A - {winner}) p of
         Error \<Rightarrow> Error
       | OK winners \<Rightarrow> OK (insert winner winners))))"
-
+*)
 
 (*
 fun multi_winner_IRV_rule :: "nat \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow> 'a set \<times> 'a set \<times> 'a set" where
