@@ -30,18 +30,6 @@ fun clones_exist_in_A :: "'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" wh
 
 
 
-(*definition has_clones :: "'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" where
-  "has_clones A p \<equiv> \<exists>c. c \<subseteq> A \<and> (list_all (\<lambda>ps. \<forall>x \<in> c. \<forall>y \<in> c. (x, y) \<in> ps \<longleftrightarrow> (y, x) \<in> ps) p)"*)
-(*
-definition has_clones :: "'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" where
-  "has_clones A p \<equiv> \<exists>c. c \<subseteq> A \<and> (\<forall>x \<in> c. \<forall>y \<in> c. x \<noteq> y \<longrightarrow> (clones_exist [r \<leftarrow> p . dir_pref_in_ballot x y r]))"
- *)
-
-(*
-definition has_clones :: "'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" where
-  "has_clones A p \<equiv> \<exists>c. c \<subseteq> A \<and> (\<forall>x \<in> c. \<forall>y \<in> c. x \<noteq> y \<longrightarrow> clones_exist (filter (\<lambda>ps. (x, y) \<in> ps \<or> (y, x) \<in> ps) p))"
-*)
-
 definition clone_up_rel :: "'a \<Rightarrow> 'a \<Rightarrow> 'a rel \<Rightarrow> 'a rel" where
   "clone_up_rel a b R = 
     {(if z = a then b else z, if w = a then b else w) | z w. (z, w) \<in> R} \<union> R \<union> {(a,b)} \<union> {(b,b)}"
@@ -50,6 +38,7 @@ definition clone_down_rel :: "'a \<Rightarrow> 'a \<Rightarrow> 'a rel \<Rightar
   "clone_down_rel a b R = 
     {(if z = a then b else z, if w = a then b else w) | z w. (z, w) \<in> R} \<union> R \<union> {(b,a)}\<union> {(b,b)}"
 
+ 
 fun modify_profile_with_clones :: "'a Profile \<Rightarrow> 'a \<Rightarrow> 'a \<Rightarrow> 'a Profile" where
 "modify_profile_with_clones p a b = 
   map 
@@ -59,8 +48,66 @@ fun modify_profile_with_clones :: "'a Profile \<Rightarrow> 'a \<Rightarrow> 'a 
       else clone_down_rel a b rel
     ) (enumerate 0 p)"
 
-fun clone_intro :: "('a set \<Rightarrow> 'a Profile \<Rightarrow> 'a Result) \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow> 'a \<Rightarrow> 'a Result" where
-"clone_intro em A p x =
+fun clone_intro :: "'a set \<Rightarrow> 'a Profile \<Rightarrow> 'a \<Rightarrow> 'a set \<times> 'a Profile" where
+  "clone_intro A p a =
+    (if a \<in> A then 
+      let x = (SOME m. m \<notin> A) in
+      let new_p = modify_profile_with_clones p a x in
+      (A \<union> {x}, new_p)
+    else (A, p))"
+
+
+(*
+
+definition independence_of_clones :: "('a set \<Rightarrow> 'a Profile \<Rightarrow> 'a set \<times> 'a set \<times> 'a set) \<Rightarrow> bool" where
+"independence_of_clones em \<equiv>
+  \<forall>A p w.
+    case em A p of
+      (A1, d, e) \<Rightarrow>
+        if A1 = A \<and> d = {} \<and> e = {w} then
+          let (A', p') = clone_intro A p w in
+            case em A' p' of
+              (A1', d', e') \<Rightarrow>
+                if A1' = A' \<and> d' = {} then 
+                  \<exists>w'. e' = {w'} \<and> (w' = w \<or> clones_exist_in_A {w', w} p')
+                else False
+        else False"
+*)
+
+(*w refers to winner, defined later*)
+definition independence_of_clones :: "('a set \<Rightarrow> 'a Profile \<Rightarrow> 'a set \<times> 'a set \<times> 'a set) \<Rightarrow> bool" where
+"independence_of_clones em \<equiv>
+  \<forall>A p.
+    let (e, r, A1) = em A p in
+    if \<exists>w. (e = {w} \<and> A1 = A - {w} \<and> r = {}) then
+      let w = the_elem e; (A', p') = clone_intro A p w in
+        case em A' p' of
+          (e', r', A1') \<Rightarrow>
+            A1' = A' \<and> r' = {} \<and> (\<exists>w'. e' = {w'} \<and> (w' = w \<or> clones_exist_in_A {w', w} p'))
+    else False"
+
+
+(*
+definition independence_of_clones :: "('a set \<Rightarrow> 'a Profile \<Rightarrow> 'a set \<times> 'a set \<times> 'a set) \<Rightarrow> bool" where
+"independence_of_clones em \<equiv>
+  \<forall>A p w.
+    case em A p of
+      (A1, d, e) \<Rightarrow>
+        if A1 = A \<and> d = {} \<and> e = {w} then
+          let (A', p') = clone_intro A p w in
+            case em A' p' of
+              (A1', d', e') \<Rightarrow>
+                if A1' = A' \<and> d' = {} then 
+                  \<exists>w'. e' = {w'} \<and> (w' = w \<or> clones_exist_in_A {w', w} p')
+                else False
+        else False"*)
+
+
+
+
+
+fun clone_intro2 :: "('a set \<Rightarrow> 'a Profile \<Rightarrow> 'a Result) \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow> 'a \<Rightarrow> 'a Result" where
+"clone_intro2 em A p x =
   (if A \<noteq> {} then 
     let a = (SOME m. m \<in> A) in
     let new_p = modify_profile_with_clones p a x in
@@ -68,5 +115,15 @@ fun clone_intro :: "('a set \<Rightarrow> 'a Profile \<Rightarrow> 'a Result) \<
     em new_A new_p
   else undefined)"
 
+definition same_result :: "('a set \<Rightarrow> 'a Profile \<Rightarrow> 'a Result) \<Rightarrow> ('a set \<Rightarrow> 'a Profile \<Rightarrow> 'a Result) \<Rightarrow> ('a Result \<Rightarrow> 'a) \<Rightarrow> bool" where
+  "same_result em1 em2 voting_rule \<equiv> \<forall> A p. em1 A p = em2 A p \<longrightarrow> voting_rule (em1 A p) = voting_rule (em2 A p)"
+
+definition same_result :: "('a set \<Rightarrow> 'a Profile \<Rightarrow> 'a Result) \<Rightarrow> ('a set \<Rightarrow> 'a Profile \<Rightarrow> 'a Result) \<Rightarrow> ('a Result \<Rightarrow> 'a) \<Rightarrow> bool" where
+  "same_result em1 em2 voting_rule \<equiv> \<forall> A p. em1 A p = em2 A p \<longrightarrow> voting_rule (em1 A p) = voting_rule (em2 A p)"
+
+definition same_result :: "('a set \<Rightarrow> 'a Profile \<Rightarrow> 'a Result) \<Rightarrow> ('a Result \<Rightarrow> 'a) \<Rightarrow> bool" where
+  "same_result em voting_rule \<equiv> \<forall> A p winner. em A p = OK winner \<longrightarrow> 
+    (\<forall>a_clone. a_clone \<noteq> winner \<longrightarrow> em (insert a_clone A) (modify_profile_with_clones p winner a_clone) = em A p) \<longrightarrow> 
+    voting_rule (em A p) = voting_rule (em (insert a_clone A) (modify_profile_with_clones p winner a_clone))"
 
 end

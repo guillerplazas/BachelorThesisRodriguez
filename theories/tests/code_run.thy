@@ -23,14 +23,19 @@ definition canA :: "char" where "canA = CHR ''a''"
 definition canB :: "char" where "canB = CHR ''b''"
 definition canC :: "char" where "canC = CHR ''c''"
 
-definition A1 :: "char set" where  "A1 = {canA, canB,canC}"
+definition A1 :: "char set" where  "A1 = {canA, canB}"
+
 
 text \<open>Definition of Preference_Profiles\<close>
-definition voter1_pref1 :: "(char \<times> char) set" where "voter1_pref1 = set [(canB, canA)]"
-definition voter2_pref1 :: "(char \<times> char) set" where "voter2_pref1 = set [(canB, canA)]"
+definition voter1_pref1 :: "(char \<times> char) set" where "voter1_pref1 = set [(canB, canA),(canA,canA),(canB,canB)]"
+definition voter2_pref1 :: "(char \<times> char) set" where "voter2_pref1 = set [(canA, canB),(canA,canA),(canB,canB)]"
 
 text \<open>Definition of profile p\<close>
 definition p1 :: "char Profile" where  "p1 = [voter1_pref1, voter2_pref1]"
+
+value "borda_rule A1 p1"
+value "borda_score canB A1 p1"
+value "copeland_rule A1 p1"
 
 text \<open>Possible value commands. Commented to help performance\<close>
 (*value "win_count p1 canA"

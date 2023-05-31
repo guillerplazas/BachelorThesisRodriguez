@@ -55,15 +55,16 @@ Voter 2: [b,a,c]
 Voter 3: [c,a,b]
 \<close>
 
-definition voter1_pref2 :: "(char \<times> char) set" where "voter1_pref2 = set [(canB, canA), (canC, canA),(canC, canB)]"
-definition voter2_pref2 :: "(char \<times> char) set" where "voter2_pref2 = set [(canA, canB), (canC, canB),(canC, canA)]"
-definition voter3_pref2 :: "(char \<times> char) set" where "voter3_pref2 = set [(canA, canC), (canB, canC),(canB, canA)]"
+definition voter1_pref2 :: "(char \<times> char) set" where "voter1_pref2 = set [(canB, canA), (canC, canA),(canC, canB),(canA, canA),(canB, canB),(canC, canC)]"
+definition voter2_pref2 :: "(char \<times> char) set" where "voter2_pref2 = set [(canA, canB), (canC, canB),(canC, canA),(canA, canA),(canB, canB),(canC, canC)]"
+definition voter3_pref2 :: "(char \<times> char) set" where "voter3_pref2 = set [(canA, canC), (canB, canC),(canB, canA),(canA, canA),(canB, canB),(canC, canC)]"
 
 (* Defining the profile p *)
 definition p2 :: "char Profile" where  "p2 = [voter1_pref2, voter2_pref2,voter3_pref2]"
 
 value "abs_rule A p2"
 value "IRV_rule A p2"
+value "reject_module p2"
 value "IRV_score canA A p2"
 
 

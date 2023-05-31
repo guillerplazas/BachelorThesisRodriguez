@@ -24,23 +24,30 @@ definition canE :: "char" where "canE = CHR ''e''"
 
 definition A :: "char set" where  "A = {canA, canB, canC, canD ,canE}"
 
+
 definition voter1_pref2 :: "(char \<times> char) set" where
-  "voter1_pref2 = set [(canE, canD), (canE, canA), (canE, canC), (canE, canB), (canD, canA), (canD, canC), (canD, canB), (canA, canC), (canA, canB), (canC, canB)]"
+  "voter1_pref2 = set [(canE, canD), (canE, canA), (canE, canC), (canE, canB), (canD, canA), (canD, canC), (canD, canB), (canA, canC), (canA, canB), (canC, canB),
+(canA, canA), (canB, canB) ,(canC, canC),(canD, canD),(canE, canE)]"
 
 definition voter2_pref2 :: "(char \<times> char) set" where
-  "voter2_pref2 = set [(canE, canB), (canE, canD), (canE, canA), (canE, canC), (canB, canD), (canB, canA), (canB, canC), (canD, canA), (canD, canC), (canA, canC)]"
+  "voter2_pref2 = set [(canE, canB), (canE, canD), (canE, canA), (canE, canC), (canB, canD), (canB, canA), (canB, canC), (canD, canA), (canD, canC), (canA, canC),
+(canA, canA), (canB, canB) ,(canC, canC),(canD, canD),(canE, canE)]"
 
 definition voter3_pref2 :: "(char \<times> char) set" where
-  "voter3_pref2 = set [(canE, canA), (canE, canC), (canE, canD), (canE, canB), (canA, canC), (canA, canD), (canA, canB), (canC, canD), (canC, canB), (canD, canB)]"
+  "voter3_pref2 = set [(canE, canA), (canE, canC), (canE, canD), (canE, canB), (canA, canC), (canA, canD), (canA, canB), (canC, canD), (canC, canB), (canD, canB),
+(canA, canA), (canB, canB) ,(canC, canC),(canD, canD),(canE, canE)]"
 
 definition voter4_pref2 :: "(char \<times> char) set" where
-  "voter4_pref2 = set [(canB, canE), (canB, canA), (canB, canC), (canB, canD), (canE, canA), (canE, canC), (canE, canD), (canA, canC), (canA, canD), (canC, canD)]"
+  "voter4_pref2 = set [(canB, canE), (canB, canA), (canB, canC), (canB, canD), (canE, canA), (canE, canC), (canE, canD), (canA, canC), (canA, canD), (canC, canD),
+  (canA, canA), (canB, canB) ,(canC, canC),(canD, canD),(canE, canE)]"
 
 definition voter5_pref2 :: "(char \<times> char) set" where
-  "voter5_pref2 = set [(canD, canC), (canD, canA), (canD, canE), (canD, canB), (canC, canA), (canC, canE), (canC, canB), (canA, canE), (canA, canB), (canE, canB)]"
+  "voter5_pref2 = set [(canD, canC), (canD, canA), (canD, canE), (canD, canB), (canC, canA), (canC, canE), (canC, canB), (canA, canE), (canA, canB), (canE, canB),
+(canA, canA), (canB, canB) ,(canC, canC),(canD, canD),(canE, canE)]"
 
 definition voter6_pref2 :: "(char \<times> char) set" where
-  "voter6_pref2 = set [(canC, canB), (canC, canD), (canC, canA), (canC, canE), (canB, canD), (canB, canA), (canB, canE), (canD, canA), (canD, canE), (canA, canE)]"
+  "voter6_pref2 = set [(canC, canB), (canC, canD), (canC, canA), (canC, canE), (canB, canD), (canB, canA), (canB, canE), (canD, canA), (canD, canE), (canA, canE),
+(canA, canA), (canB, canB) ,(canC, canC),(canD, canD),(canE, canE)]"
 
 definition p1 :: "char Profile" where  "p1 = [voter1_pref2, voter2_pref2,voter3_pref2,voter4_pref2,voter5_pref2,voter6_pref2]"
 

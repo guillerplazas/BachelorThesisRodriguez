@@ -30,7 +30,7 @@ value "dir_pref_in_ballot canC canA voter1_pref1"
 value "clones_exist p1"
 value "clones_exist_in_A A p1"
 value "modify_profile_with_clones p1  canA canX"
-value "clone_intro A p1"
+value "clone_intro A p1 canX"
 
 value "is_directly_preferred_in_ballot canB canC voter1_pref1"
 value "always_directly_preferred p1"
@@ -50,5 +50,23 @@ definition p2 :: "char Profile" where  "p2 = [voter1_pref2, voter2_pref2]"
 
 value "modify_profile_with_clones p2  canA canX"
 
+
+datatype 'a list = Nil | Cons 'a "'a list"
+
+fun app :: "'a list \<Rightarrow> 'a list \<Rightarrow> 'a list" where
+"app Nil ys = ys" |
+"app (Cons x xs) ys = Cons x (app xs ys)"
+
+fun rev :: "'a list \<Rightarrow> 'a list" where
+"rev Nil = Nil" |
+"rev (Cons x xs) = app (rev xs) (Cons x Nil)"
+
+lemma rev_app [simp]: "rev(app xs ys) = app (rev ys) (rev xs)"
+  apply(induction xs)
+   apply(auto)
+
+theorem rev_rev [simp]: "rev(rev xs) = xs"
+  apply(induction xs)
+  apply(auto)
 
 end
