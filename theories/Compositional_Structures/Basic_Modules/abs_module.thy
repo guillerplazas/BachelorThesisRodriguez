@@ -7,6 +7,7 @@ theory abs_module
  "Defer_Module"
 
 
+
 begin
 
 
@@ -32,6 +33,8 @@ fun absolute_max:: "'a Electoral_Module" where
 (*just a test*)
 fun absolute_min:: "'a Electoral_Module" where
   "absolute_min A p = min_eliminator abs_score A p"
+
+
 
 
 

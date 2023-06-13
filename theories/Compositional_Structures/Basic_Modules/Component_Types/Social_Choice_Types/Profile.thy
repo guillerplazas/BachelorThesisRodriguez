@@ -65,9 +65,27 @@ fun win_count :: "'a Profile \<Rightarrow> 'a \<Rightarrow> nat" where
   "win_count p a =
     card {i::nat. i < length p \<and> above (p!i) a = {a}}"
 
+fun loose_count_code :: "'a Profile \<Rightarrow> 'a \<Rightarrow> nat" where
+  "loose_count_code Nil a = 0" |
+  "loose_count_code (p#ps) a =
+      (if (under p a = {a}) then 1 else 0) + loose_count_code ps a"
+
+
+definition is_least_preferred :: "'a Preference_Relation \<Rightarrow> 'a \<Rightarrow> bool" where
+  "is_least_preferred r a = (under r a = Field r - {a})"
+
+fun loose_count :: "'a Profile \<Rightarrow> 'a \<Rightarrow> nat" where
+  "loose_count p a =
+    card {i::nat. i < length p \<and> is_least_preferred (p!i) a}"
+
+
+
+
 
 fun has_majority :: "'a Profile \<Rightarrow> 'a \<Rightarrow> bool" where
   "has_majority p a = (win_count p a > ( length p div 2))"
+
+
 
 fun not_has_majority :: "'a Profile \<Rightarrow> 'a \<Rightarrow> bool" where
   "not_has_majority p a = (win_count p a \<le> ( length p div 2))"

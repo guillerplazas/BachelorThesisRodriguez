@@ -24,9 +24,11 @@ definition voter3_pref1 :: "(char \<times> char) set" where "voter3_pref1 = set 
 
 definition p1 :: "char Profile" where  "p1 = [voter1_pref1, voter2_pref1,voter3_pref1]"
 
+
 value "dir_pref_in_ballot canA canB voter1_pref1"
+value "min_eliminator IRV_score A p1 "
 value "IRV_rule A p1"
-value "profile A p1"
+value "loose_count p1 canA"
 
 text \<open>Other test made, commented for performance\<close>
 (*
@@ -63,6 +65,8 @@ definition voter3_pref2 :: "(char \<times> char) set" where "voter3_pref2 = set 
 definition p2 :: "char Profile" where  "p2 = [voter1_pref2, voter2_pref2,voter3_pref2]"
 
 value "abs_rule A p2"
+value "IRV_tie A p2"
+value "step_2 A p1"
 value "IRV_rule A p2"
 value "reject_module p2"
 value "IRV_score canA A p2"

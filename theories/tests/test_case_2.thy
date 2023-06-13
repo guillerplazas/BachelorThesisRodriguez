@@ -53,13 +53,52 @@ definition p1 :: "char Profile" where  "p1 = [voter1_pref2, voter2_pref2,voter3_
 
 
 value "IRV_rule A p1"
-value "mid_step A p1"
+value "(mid_step\<triangleright>mid_step) A p1"
+value "step_2 A p1"
+value "(mid_step_2\<triangleright>mid_step_2) A p1"
 value "absolute_min A p1"
 value "absolute_max A p1"
 value "abs_winner A p1 canB"
 value "abs_rule A p1"
 
+text \<open>
+code:
+a and c are clones
+bottom[...]top 
+[b,a,c]
+[b,a,c]
+[b,c,a]
+[b,c,a]
+[c,a,b]
+[c,a,b]
+\<close>
 
+definition A3 :: "char set" where  "A3 = {canA, canB, canC}"
+
+definition voter1_pref3 :: "(char \<times> char) set" where
+  "voter1_pref3 = set [(canB, canA), (canB, canC), (canA, canC), (canA, canA), (canB, canB), (canC, canC)]"
+
+definition voter2_pref3 :: "(char \<times> char) set" where
+  "voter2_pref3 = set [(canB, canA), (canB, canC), (canA, canC), (canA, canA), (canB, canB), (canC, canC)]"
+
+definition voter3_pref3 :: "(char \<times> char) set" where
+  "voter3_pref3 = set [(canB, canC), (canB, canA), (canC, canA), (canA, canA), (canB, canB), (canC, canC)]"
+
+definition voter4_pref3 :: "(char \<times> char) set" where
+  "voter4_pref3 = set [(canB, canC), (canB, canA), (canC, canA), (canA, canA), (canB, canB), (canC, canC)]"
+
+definition voter5_pref3 :: "(char \<times> char) set" where
+  "voter5_pref3 = set [(canC, canA), (canC, canB), (canA, canB), (canA, canA), (canB, canB), (canC, canC)]"
+
+definition voter6_pref3 :: "(char \<times> char) set" where
+  "voter6_pref3 = set [(canC, canA), (canC, canB), (canA, canB), (canA, canA), (canB, canB), (canC, canC)]"
+
+definition p3 :: "char Profile" where  
+  "p3 = [voter1_pref3, voter2_pref3, voter3_pref3, voter4_pref3, voter5_pref3, voter6_pref3]"
+
+value "mid_step_2 A3 p3"
+value "drop_module 2  "
+value "IRV_tie A3 p3"
 
 
 end
