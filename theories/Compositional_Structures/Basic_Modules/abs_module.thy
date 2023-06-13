@@ -5,6 +5,7 @@ theory abs_module
  "Component_Types/Elimination_Module"
  "Component_Types/Social_Choice_Types/Profile"
  "Defer_Module"
+  "Drop_Module"
 
 
 
@@ -12,6 +13,25 @@ begin
 
 
 subsection \<open>Definition\<close>
+
+fun eliminate_least_score :: "'a Evaluation_Function \<Rightarrow> 'a Preference_Relation \<Rightarrow> 'a Electoral_Module" where
+  "eliminate_least_score e r A p =
+    (if A = {} then ({}, {}, {})
+     else
+        (if card A = 1 then defer_module A p  
+        else
+        let scores = {e x A p | x. x \<in> A};
+            min_score = Min scores;
+            candidates_with_min_score = {x \<in> A. e x A p = min_score}
+        in
+            if candidates_with_min_score = {} then ({}, {}, A)
+            else if card candidates_with_min_score = 1 then ({}, candidates_with_min_score, A-candidates_with_min_score)
+            else
+              let (_, to_eliminate, _) = drop_module 1 r candidates_with_min_score p
+              in
+                if to_eliminate = {} then ({},{},A)
+                else ({}, to_eliminate, A - to_eliminate)))"
+
 
 
 (*Some functions might need reordering*)

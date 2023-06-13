@@ -5,10 +5,17 @@ theory IRV_Rule
         "Compositional_Structures/Basic_Modules/abs_module"
           "Compositional_Structures/Defer_One_Loop_Composition"
            "independence_of_clones"
+          "Compositional_Structures/Basic_Modules/drop_module"
 begin
 
 fun IRV_score :: "'a Evaluation_Function" where
   "IRV_score x A p = win_count p x"
+
+fun IRV_rule_drop :: "'a Preference_Relation \<Rightarrow> 'a Electoral_Module" where
+  "IRV_rule_drop r A p= (((absolute_max \<triangleright> ( eliminate_least_score IRV_score r) )\<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d)\<triangleright> elect_module) A p"
+
+fun IRV_step_drop ::"'a Preference_Relation \<Rightarrow> 'a Electoral_Module" where
+  "IRV_step_drop r A p=(absolute_max \<triangleright>  eliminate_least_score IRV_score r) A p "
 
 
 fun IRV_score_2 :: "'a Evaluation_Function" where

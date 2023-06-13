@@ -19,11 +19,14 @@ fun clones_exist_in_A :: "'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" wh
   (\<exists>a\<in>A. \<exists>b\<in>A. a \<noteq> b \<and> 
     (\<forall>r \<in> set p. (dir_pref_in_ballot a b r) \<or> (dir_pref_in_ballot b a r)))"
 
-definition introduces_clone_in_candidate :: "'a \<Rightarrow> 'a \<Rightarrow> 'a Profile \<Rightarrow> 'a Profile \<Rightarrow> bool" where
-  "introduces_clone_in_candidate a c p pc \<equiv> 
-    a \<noteq> c \<and> 
+definition introduces_clone_in_candidate :: "'a \<Rightarrow> 'a \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" where
+  "introduces_clone_in_candidate a c A p Ac pc \<equiv> 
+    a \<noteq> c \<and> Ac = A \<union> {c} \<and>
     (\<forall>r \<in> set pc. (dir_pref_in_ballot a c r) \<or> (dir_pref_in_ballot c a r)) \<and>
-    (\<forall>r \<in> set p. \<forall>r' \<in> set pc. \<forall>b d. b \<noteq> a \<and> b \<noteq> c \<and> d \<noteq> a \<and> d \<noteq> c \<longrightarrow> ((b, d) \<in> r \<longleftrightarrow> (b, d) \<in> r'))"
+    (\<forall>r \<in> set p. \<forall>r' \<in> set pc. 
+        (\<forall>b d. b \<noteq> a \<and> b \<noteq> c \<and> d \<noteq> a \<and> d \<noteq> c \<longrightarrow> ((b, d) \<in> r \<longleftrightarrow> (b, d) \<in> r')) \<and>
+        (\<forall>b. b \<noteq> a \<and> b \<noteq> c \<longrightarrow> ((b, a) \<in> r \<longrightarrow> ((b, a) \<in> r' \<and> (b, c) \<in> r'))) \<and>
+        (\<forall>d. d \<noteq> a \<and> d \<noteq> c \<longrightarrow> ((a, d) \<in> r \<longrightarrow> ((a, d) \<in> r' \<and> (c, d) \<in> r'))))"
 
 
 definition introduces_clone2 :: "'a set \<Rightarrow> 'a \<Rightarrow> 'a Profile \<Rightarrow> 'a Profile \<Rightarrow> bool" where
