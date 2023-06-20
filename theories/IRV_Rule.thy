@@ -18,35 +18,13 @@ fun IRV_step_drop ::"'a Preference_Relation \<Rightarrow> 'a Electoral_Module" w
   "IRV_step_drop r A p=(absolute_max \<triangleright>  eliminate_least_score IRV_score r) A p "
 
 
-fun IRV_score_2 :: "'a Evaluation_Function" where
-  "IRV_score_2 x A p =
-     (if (\<exists>y \<in> A. x \<noteq> y \<and> win_count p x = win_count p y \<and>
-                  (\<forall>z \<in> A. (z \<noteq> x \<longrightarrow> z \<noteq> y \<longrightarrow> win_count p z \<ge> win_count p x)))
-      then win_count p x - loose_count_code p x
-      else win_count p x)"
-
-fun IRV_tie_cand :: "'a \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" where
-  "IRV_tie_cand x A p =
-     (if (\<exists>y \<in> A. x \<noteq> y \<and> win_count p x = win_count p y \<and>
-                  (\<forall>z \<in> A. (z \<noteq> x \<longrightarrow> z \<noteq> y \<longrightarrow> win_count p z \<ge> win_count p x)))
-      then True
-      else False)"
-
-
-fun IRV_tie :: "'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" where
-  "IRV_tie A p = (\<exists>x \<in> A. \<exists>y \<in> A. x \<noteq> y \<and> win_count p x = win_count p y \<and> 
-                   (\<forall>z \<in> A. z \<noteq> x \<longrightarrow> z \<noteq> y \<longrightarrow> win_count p z \<ge> win_count p x))"
-
-
-(*Aqui acaban definiciones de absolute*)
-
 fun IRV_rule :: "'a Electoral_Module" where
   "IRV_rule A p= (((absolute_max \<triangleright> min_eliminator IRV_score )\<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d)\<triangleright> elect_module) A p"
 
-fun mid_step :: "'a Electoral_Module" where
-  "mid_step A p= (absolute_max \<triangleright> min_eliminator IRV_score) A p"
 
+(*Garbage *)
 
+(*
 fun sum_IRV_score :: "'a::finite set \<Rightarrow> 'a Profile \<Rightarrow> nat" where
   "sum_IRV_score A p =  (\<Sum> y \<in> A. (IRV_score y A p))"
 
@@ -54,12 +32,33 @@ fun max_IRV_score :: "'a::finite set \<Rightarrow> 'a Profile \<Rightarrow> nat"
   "max_IRV_score A p = Max ((\<lambda> a. IRV_score a A p) ` A)"
 
 fun step_2 :: "'a Electoral_Module" where
-  "step_2 A p= min_eliminator IRV_score_2 A p"
+  "step_2 A p= min_eliminator IRV_score_2 A p*)
 
 
+(*fun mid_step :: "'a Electoral_Module" where
+  "mid_step A p= (absolute_max \<triangleright> min_eliminator IRV_score) A p"*)
 
+(*fun IRV_tie :: "'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" where
+  "IRV_tie A p = (\<exists>x \<in> A. \<exists>y \<in> A. x \<noteq> y \<and> win_count p x = win_count p y \<and> 
+                   (\<forall>z \<in> A. z \<noteq> x \<longrightarrow> z \<noteq> y \<longrightarrow> win_count p z \<ge> win_count p x))"
+*)
 
+(*fun IRV_score_2 :: "'a Evaluation_Function" where
+  "IRV_score_2 x A p =
+     (if (\<exists>y \<in> A. x \<noteq> y \<and> win_count p x = win_count p y \<and>
+                  (\<forall>z \<in> A. (z \<noteq> x \<longrightarrow> z \<noteq> y \<longrightarrow> win_count p z \<ge> win_count p x)))
+      then win_count p x - loose_count_code p x
+      else win_count p x)"*)
 
+(*
+fun IRV_tie_cand :: "'a \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" where
+  "IRV_tie_cand x A p =
+     (if (\<exists>y \<in> A. x \<noteq> y \<and> win_count p x = win_count p y \<and>
+                  (\<forall>z \<in> A. (z \<noteq> x \<longrightarrow> z \<noteq> y \<longrightarrow> win_count p z \<ge> win_count p x)))
+      then True
+      else False)"*)
+
+(*
 lemma not_both_lowest_score_after_clone:
   fixes p :: "'a Profile"
     and a :: 'a
@@ -101,6 +100,7 @@ proof
     sorry  (* Here you need to provide the proof for this statement *)
   ultimately show False by simp
 qed
+*)
 
 
 

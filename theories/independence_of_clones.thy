@@ -40,9 +40,9 @@ definition is_deferred :: "'a \<Rightarrow> 'a Electoral_Module \<Rightarrow> 'a
 
 definition independence_of_clones :: "'a Electoral_Module \<Rightarrow> bool" where
   "independence_of_clones em \<equiv> 
-    \<forall>A p pc. (\<exists> a \<in> elect em A p. \<exists>c. c \<notin> A \<and> 
-      introduces_clone_in_candidate a c p pc 
-      \<longrightarrow> (is_winner a em (A \<union> {c}) pc \<or> is_winner c em (A \<union> {c}) pc))"
+    \<forall>A p Ac pc. (\<exists> a \<in> elect em A p. \<exists>c. c \<notin> A \<and> 
+      introduces_clone_in_candidate a c A p Ac pc 
+      \<longrightarrow> (is_winner a em Ac pc \<or> is_winner c em Ac pc))"
 
 definition independence_of_clones_deferred :: "'a Electoral_Module \<Rightarrow> bool" where
   "independence_of_clones_deferred em \<equiv> 

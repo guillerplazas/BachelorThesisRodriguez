@@ -1,11 +1,11 @@
 section \<open>Plurality Module\<close>
 
 theory abs_module
-  imports "Component_Types/Electoral_Module"
+  imports 
  "Component_Types/Elimination_Module"
  "Component_Types/Social_Choice_Types/Profile"
  "Defer_Module"
-  "Drop_Module"
+ "Drop_Module"
 
 
 
@@ -50,10 +50,11 @@ fun abs_existence:: "'a set \<Rightarrow> 'a Profile  \<Rightarrow> bool" where
 fun absolute_max:: "'a Electoral_Module" where
   "absolute_max A p = (if (abs_existence A p) then ( max_eliminator abs_score A p) else defer_module A p)"
 
-(*just a test*)
+(*Garbage*)
+(*
 fun absolute_min:: "'a Electoral_Module" where
   "absolute_min A p = min_eliminator abs_score A p"
-
+*)
 
 
 
