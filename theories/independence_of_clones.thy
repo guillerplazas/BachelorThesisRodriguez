@@ -3,8 +3,10 @@ section \<open>independence_of_clones\<close>
 theory independence_of_clones
   imports 
         "Compositional_Structures/Basic_Modules/abs_module"
+        "IRV_rule"
 begin
 
+subsection \<open>Definitions \<close>
 definition is_clone_set :: "'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" where
   "is_clone_set A p \<equiv> \<forall>r \<in> set p. \<forall>a \<in> A. \<forall>b \<in> A. a \<noteq> b \<longrightarrow> ((a, b) \<in> r \<longleftrightarrow> (b, a) \<in> r)"
 
@@ -19,9 +21,11 @@ fun clones_exist_in_A :: "'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" wh
   (\<exists>a\<in>A. \<exists>b\<in>A. a \<noteq> b \<and> 
     (\<forall>r \<in> set p. (dir_pref_in_ballot a b r) \<or> (dir_pref_in_ballot b a r)))"
 
+(*Corregir: p \<noteq> [] \<and> pc \<noteq> []*)
 definition introduces_clone_in_candidate :: "'a \<Rightarrow> 'a \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow> 'a set \<Rightarrow> 'a Profile \<Rightarrow> bool" where
   "introduces_clone_in_candidate a c A p Ac pc \<equiv> 
-    a \<noteq> c \<and> Ac = A \<union> {c} \<and>
+    a \<noteq> c \<and> c \<notin> A \<and> profile A p \<and> profile Ac pc \<and> Ac = A \<union> {c} \<and>
+  p \<noteq> [] \<and> pc \<noteq> [] \<and> 
     (\<forall>r \<in> set pc. (dir_pref_in_ballot a c r) \<or> (dir_pref_in_ballot c a r)) \<and>
     (\<forall>r \<in> set p. \<forall>r' \<in> set pc. 
         (\<forall>b d. b \<noteq> a \<and> b \<noteq> c \<and> d \<noteq> a \<and> d \<noteq> c \<longrightarrow> ((b, d) \<in> r \<longleftrightarrow> (b, d) \<in> r')) \<and>
@@ -46,9 +50,11 @@ definition independence_of_clones :: "'a Electoral_Module \<Rightarrow> bool" wh
 
 definition independence_of_clones_deferred :: "'a Electoral_Module \<Rightarrow> bool" where
   "independence_of_clones_deferred em \<equiv> 
-    \<forall>A p pc. (\<exists> a \<in> defer em A p. \<exists>c. c \<notin> A \<and> 
-      introduces_clone_in_candidate a c p pc 
+    \<forall>A p Ac pc. (\<exists> a \<in> defer em A p. \<exists>c. c \<notin> A \<and> 
+      introduces_clone_in_candidate a c A p Ac pc 
       \<longrightarrow> (is_deferred a em (A \<union> {c}) pc \<or> is_deferred c em (A \<union> {c}) pc))"
+
+subsection \<open>Basic Lemmas\<close>
 
 lemma dir_pref_excludes_inverse:
   assumes "dir_pref_in_ballot a b r" 
@@ -68,11 +74,225 @@ proof
 qed
 
 lemma introduces_clone_implies_dir_pref:
-  assumes "introduces_clone_in_candidate a c p pc"
+  assumes "introduces_clone_in_candidate a c A p Ac pc"
   shows "\<forall>r \<in> set pc. dir_pref_in_ballot a c r \<or> dir_pref_in_ballot c a r"
   using assms
   unfolding introduces_clone_in_candidate_def
   by simp
+
+
+
+subsection \<open>Reset Clones\<close>
+
+lemma reset_clone_set:
+  assumes "introduces_clone_in_candidate a c A p Ac pc"
+  and "electoral_module m"
+  and "c \<in> reject m Ac pc"
+  shows "A = Ac - {c}"
+proof-
+  have "Ac = A \<union> {c}" using assms(1) unfolding introduces_clone_in_candidate_def by blast
+  moreover have "c \<in> Ac" using assms(1) unfolding introduces_clone_in_candidate_def by blast
+  have "c \<notin> A" using assms(1) unfolding introduces_clone_in_candidate_def by blast
+  have "Ac - {c} = A"
+    by (simp add: \<open>c \<notin> A\<close> calculation(1)) 
+  thus ?thesis by simp
+qed
+
+lemma reset_clone_prof:
+  assumes "introduces_clone_in_candidate a c A p Ac pc"
+  and "electoral_module m"
+  and "c \<in> reject m Ac pc"
+  and "m Ac pc = An pn "
+shows "p=pn"
+proof -
+  have Ac_def: "Ac = A \<union> {c}" using assms(1) unfolding introduces_clone_in_candidate_def by blast
+  have profile_A_p: "profile A p" using assms(1) unfolding introduces_clone_in_candidate_def by blast
+  have profile_Ac_pc: "profile Ac pc" using assms(1) unfolding introduces_clone_in_candidate_def by blast
+  
+  have profile_An_pn: "profile An pn" using assms(4)
+
+  have "\<forall>r' \<in> set pn. \<exists>r \<in> set pc. r' = r"
+  proof -
+    {
+      fix r' assume "r' \<in> set pn"
+      obtain r where "r \<in> set pc" and r'_def: "r' = r"
+        using assms(4) profile_Ac_pc profile_An_pn elect_in_candidates by metis
+      hence "\<exists>r \<in> set pc. r' = r" by auto
+    }
+    thus ?thesis by auto
+  qed
+  hence "set pn \<subseteq> set pc" by auto
+  hence "length pn \<le> length pc"
+    using distinct_card[of pc] distinct_card[of pn] distinct_card_mono[of pc pn] profile_Ac_p profile_An_pn by auto
+  moreover have "length pc \<le> length pn"
+    using assms(3) profile_Ac_p profile_An_pn elect_elim_leq_length by metis
+  ultimately have "length pn = length pc" by simp
+  hence "length p = length pn"
+    using assms(1) profile_Ac_p profile_An_pn introduces_clone_length_eq by metis
+  moreover have "\<forall>i < length p. p!i = pn!i"
+  proof -
+    {
+      fix i assume "i < length p"
+      obtain r where "r \<in> set pc" and r_def: "pc!index pc r = r" and pref_eq: "p!i = removeCandidate a r"
+        using assms(1) profile_Ac_p introduces_clone_preference_eq by metis
+      have "i < length pn"
+        using \<open>length pn = length pc\<close> \<open>i < length p\<close> assms(1) profile_Ac_p introduces_clone_length_eq by metis
+      hence "pn!i = removeCandidate a r"
+        using \<open>r \<in> set pc\<close> assms(4) profile_Ac_p profile_An_pn r_def elect_elim_candidates pref_eq by metis
+      hence "p!i = pn!i"
+        using pref_eq by simp
+    }
+    thus ?thesis by auto
+  qed
+  ultimately have "p = pn" by (simp add: nth_equalityI)
+  thus ?thesis by simp
+qed
+
+
+
+  have restricted_relations_equal: "\<forall>r' \<in> set pc.  r' \<in> set p"
+    by blast
+    sorry -- Prove this using introduces_clone_in_candidate properties
+
+  have "set p = set pc"
+  proof
+    show "set p \<subseteq> set pc"
+      sorry -- Use restricted_relations_equal to show that each element of p is in pc
+    show "set pc \<subseteq> set p"
+      sorry -- Use restricted_relations_equal to show that each element of pc is in p
+  qed
+  moreover have "length p = length pc"
+    using assms(1) unfolding introduces_clone_in_candidate_def by blast
+  ultimately show ?thesis
+    sorry -- Conclude that p and pc must be the same. You may not necessarily need multiset_eq_iff_counts_eq here.
+qed
+qed
+
+
+
+
+
+lemma introduces_clone_preserves_elimination:
+  assumes "introduces_clone_in_candidate a c A p Ac pc"
+  shows "{a,c} \<notin> reject IRV_step_drop r  A p"
+proof -
+  obtain scores min_score candidates_with_min_score where
+    scores_def: "scores = {IRV_score x (set A) p |x. x \<in> set A}"
+    and min_score_def: "min_score = Min scores"
+    and candidates_with_min_score_def: "candidates_with_min_score = {x \<in> set A. IRV_score x (set A) p = min_score}"
+    by blast
+
+  obtain q where q_def: "q = (IRV_step_drop r (set A) p)"
+    by simp
+
+  have "eliminate_least_score IRV_score r (set A) p = q"
+    using q_def by simp
+
+  have "snd q = set candidates_with_min_score"
+    using candidates_with_min_score_def min_score_def scores_def q_def
+    by (metis (mono_tags, lifting) case_prod_conv)
+
+  hence "to_eliminate \<in> set candidates_with_min_score"
+    using assms(2) q_def by simp
+
+  have "c \<noteq> a" and "c \<noteq> b" and "a \<noteq> b" and "b \<noteq> a"
+    using assms(1) unfolding introduces_clone_in_candidate_def' by auto
+
+  have "\<forall>x. x \<noteq> a \<and> x \<noteq> c \<longrightarrow> (IRV_score x (set A) p \<noteq> min_score)"
+  proof -
+    {
+      fix x
+      assume "x \<noteq> a" and "x \<noteq> c"
+      have "IRV_score x (set A) p \<noteq> min_score"
+      proof (rule ccontr)
+        assume "IRV_score x (set A) p = min_score"
+        hence "x \<in> candidates_with_min_score"
+          using candidates_with_min_score_def by simp
+        have "x \<in> set A"
+          using `x \<in> candidates_with_min_score` candidates_with_min_score_def by auto
+        have "x \<in> to_eliminate"
+          using `to_eliminate \<in> set candidates_with_min_score` `x \<in> candidates_with_min_score`
+            `snd q = set candidates_with_min_score` assms(2) q_def by simp
+        have "x \<noteq> a" and "x \<noteq> c"
+          using `x \<in> set A` `introduces_clone_in_candidate a c A p Ac pc` unfolding introduces_clone_in_candidate_def' by auto
+        have "x \<in> to_eliminate \<inter> (set A - {a})"
+
+
+lemma introduces_clone_preserves_elimination:
+  assumes "introduces_clone_in_candidate a c A p Ac pc"
+    and "to_eliminate \<in> defer IRV_step_drop r A p"
+  shows "c \<notin> to_eliminate"
+proof -
+  obtain scores min_score candidates_with_min_score where
+    scores_def: "scores = {IRV_score x A p |x. x \<in> A}"
+    and min_score_def: "min_score = Min scores"
+    and candidates_with_min_score_def: "candidates_with_min_score = {x \<in> A. IRV_score x A p = min_score}"
+    by blast
+
+  obtain q where q_def: "q = (IRV_step_drop r A p)"
+    by simp
+
+  have "eliminate_least_score IRV_score r A p = q"
+    using q_def by simp
+
+  have "snd q = candidates_with_min_score"
+    using candidates_with_min_score_def min_score_def scores_def q_def
+    by (metis (mono_tags, lifting) case_prod_conv)
+
+  hence "to_eliminate \<in> set candidates_with_min_score"
+    using assms(2) q_def by simp
+
+  have "c \<noteq> a" and "c \<noteq> b" and "a \<noteq> b" and "b \<noteq> a"
+    using assms(1) unfolding introduces_clone_in_candidate_def' by auto
+
+  have "\<forall>x. x \<noteq> a \<and> x \<noteq> c \<longrightarrow> (IRV_score x A p \<noteq> min_score)"
+  proof -
+    {
+      fix x
+      assume "x \<noteq> a" and "x \<noteq> c"
+      have "IRV_score x A p \<noteq> min_score"
+      proof (rule ccontr)
+        assume "IRV_score x A p = min_score"
+        hence "x \<in> candidates_with_min_score"
+          using candidates_with_min_score_def by simp
+        have "x \<in> A"
+          using `x \<in> candidates_with_min_score` candidates_with_min_score_def by auto
+        have "x \<in> to_eliminate"
+          using `to_eliminate \<in> set candidates_with_min_score` `x \<in> candidates_with_min_score`
+            `snd q = candidates_with_min_score` assms(2) q_def by simp
+        have "x \<noteq> a" and "x \<noteq> c"
+          using `x \<in> A` `introduces_clone_in_candidate a c A p Ac pc` unfolding introduces_clone_in_candidate_def' by auto
+        have "x \<in> to_eliminate \<inter> (A - {a})"
+          using `x \<in> to_eliminate` `x \<in> A` `x \<noteq> a` by blast
+        have "to_eliminate \<inter> (A - {a}) \<noteq> {}"
+          using `x \<in> to_eliminate \<inter> (A - {a})` by blast
+        hence "to_eliminate \<inter> (A - {a}) \<noteq> {}" and "to_eliminate \<inter> (A - {c}) \<noteq> {}"
+          using `to_eliminate \<in> set candidates_with_min_score` `snd q = candidates_with_min_score`
+            `x \<noteq> a` `x \<noteq> c` assms(1) unfolding introduces_clone_in_candidate_def'
+          by blast+
+        hence "a \<in> to_eliminate" and "c \<in> to_eliminate"
+          using `c \<notin> A` unfolding introduces_clone_in_candidate_def' by auto
+        hence "a = c"
+          using `introduces_clone_in_candidate a c A p Ac pc` unfolding introduces_clone_in_candidate_def
+
+
+
+
+(*
+lemma introduces_clone_preserves_abs_winner:
+  assumes "introduces_clone_in_candidate a c A p Ac pc"
+    and "abs_winner A p w"
+  shows "abs_winner Ac pc w"
+proof -
+  have "finite_profile A p" and "w \<in> A" and "has_majority p w"
+    using assms(2) by auto
+  hence "finite_profile Ac pc" and "w \<in> Ac" and "has_majority pc w"
+    using assms(1) unfolding introduces_clone_in_candidate_def' by auto
+  thus "abs_winner Ac pc w"
+    by (simp add: abs_winner.simps)
+qed
+
+
 
 lemma preservation_of_preferences:
   assumes "dir_pref_in_ballot a b r"
@@ -109,7 +329,7 @@ qed
 lemma win_count_of_new_clone:
   assumes "introduces_clone_in_candidate a c p pc"
   shows "win_count pc c \<le> win_count p a"
-
+*)
 
 (**)
 

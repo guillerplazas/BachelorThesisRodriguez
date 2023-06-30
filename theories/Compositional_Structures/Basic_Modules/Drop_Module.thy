@@ -87,4 +87,9 @@ theorem drop_mod_def_lift_inv[simp]:
   using assms
   by simp
 
+theorem drop_module_cardinality:
+  assumes "finite_profile A p"
+  assumes "linear_order r"
+    shows "card (reject_r (drop_module 1 r A p)) <2  "
+
 end

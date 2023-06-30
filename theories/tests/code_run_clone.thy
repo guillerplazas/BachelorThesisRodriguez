@@ -13,6 +13,9 @@ definition canX :: "char" where "canX = CHR ''x''"
 
 definition prevA :: "char set" where  "prevA = {canA, canB}"
 definition A :: "char set" where  "A = {canA, canB, canC}"
+              
+definition emp :: "char set" where "emp={}"
+value "card emp"
 
 text \<open>
 Case 1: Strict clones

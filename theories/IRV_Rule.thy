@@ -4,7 +4,6 @@ theory IRV_Rule
   imports Pairwise_Majority_Rule
         "Compositional_Structures/Basic_Modules/abs_module"
           "Compositional_Structures/Defer_One_Loop_Composition"
-           "independence_of_clones"
           "Compositional_Structures/Basic_Modules/drop_module"
 begin
 
@@ -14,8 +13,12 @@ fun IRV_score :: "'a Evaluation_Function" where
 fun IRV_rule_drop :: "'a Preference_Relation \<Rightarrow> 'a Electoral_Module" where
   "IRV_rule_drop r A p= (((absolute_max \<triangleright> ( eliminate_least_score IRV_score r) )\<circlearrowleft>\<^sub>\<exists>\<^sub>!\<^sub>d)\<triangleright> elect_module) A p"
 
+fun IRV_step_drop_test ::"'a Preference_Relation \<Rightarrow> 'a Electoral_Module" where
+  "IRV_step_drop_test r A p=(absolute_max \<triangleright>  eliminate_least_score IRV_score r) A p "
+
 fun IRV_step_drop ::"'a Preference_Relation \<Rightarrow> 'a Electoral_Module" where
-  "IRV_step_drop r A p=(absolute_max \<triangleright>  eliminate_least_score IRV_score r) A p "
+  "IRV_step_drop r A p=eliminate_least_score IRV_score r A p "
+
 
 
 fun IRV_rule :: "'a Electoral_Module" where
@@ -271,7 +274,7 @@ lemma IRV_satisfies_independence_of_clones:
                    \<exists>w'. e' = {w'} \<and> (w' = w \<or> clones_exist_in_A {w', w} p')
                  else False
          else False"*)
-
+(*
 theorem clone_preserves_high_score:
   assumes 
     "is_winner a (step_2) A p"
@@ -339,11 +342,11 @@ qed
 
   (* This implies that neither a nor c has the lowest score in pc *)
   show "\<not>(score_a_pc < ?min_score_except_ac \<and> score_c_pc < ?min_score_except_ac)" by simp
-qed
+qed*)
 
 
 
-
+(*
 lemma IRV_satisfies_independence_of_clones:
   shows "independence_of_clones IRV_rule"
 unfolding independence_of_clones_def
@@ -360,7 +363,7 @@ proof (clarify)
     then have "a \<in> winners \<or> c \<in> winners" using introduces unfolding introduces_clone_in_candidate_def by auto
     then show ?thesis unfolding is_winner_def by blast
   qed
-qed
+qed*)
 
 
 
@@ -371,6 +374,7 @@ qed
 
 
 (*Proof mas avanzada*)
+(*
 lemma IRV_satisfies_independence_of_clones:
   shows "independence_of_clones IRV_rule"
 unfolding independence_of_clones_def
@@ -403,7 +407,7 @@ proof (clarify)
   ultimately show "r' = {} \<and> (\<exists>w'. e' = {w'} \<and> (w' = winner \<or> clones_exist_in_A {w', winner} (snd ?clone)))"
     by auto
 qed
-
+*)
 
 
 
